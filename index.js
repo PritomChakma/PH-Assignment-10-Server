@@ -41,15 +41,9 @@ async function run() {
     app.get("/allReview/:id", async (req, res) => {
       const id = req.params.id;
       const query = { _id: new ObjectId(id) };
-      const review = await gameReview.findOne(query)
+      const review = await gameReview.findOne(query);
       res.send(review);
     });
-
-    // app.get("/allReview", async (req, res) => {
-    //   const review = gameReview.find().limit(6).sort({rating:-1})
-    //   const result = await review.toArray()
-    //   res.send(result)
-    // })
 
     app.get("/myReview", async (req, res) => {
       const { email } = req.query;
