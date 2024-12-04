@@ -38,6 +38,19 @@ async function run() {
       res.send(result);
     });
 
+    app.get("/allReview/:id", async (req, res) => {
+      const id = req.params.id;
+      const query = { _id: new ObjectId(id) };
+      const review = await gameReview.findOne(query)
+      res.send(review);
+    });
+
+    // app.get("/allReview", async (req, res) => {
+    //   const review = gameReview.find().limit(6).sort({rating:-1})
+    //   const result = await review.toArray()
+    //   res.send(result)
+    // })
+
     app.get("/myReview", async (req, res) => {
       const { email } = req.query;
       const allReview = await gameReview.find().toArray();
@@ -48,7 +61,7 @@ async function run() {
     app.get("/myReview/:id", async (req, res) => {
       const id = req.params.id;
       const query = { _id: new ObjectId(id) };
-      const result = await gameReview.find(query);
+      const result = await gameReview.findOne(query);
       res.send(result);
     });
 
@@ -56,6 +69,23 @@ async function run() {
       const review = req.body;
       console.log(review);
       const result = await gameReview.insertOne(review);
+      res.send(result);
+    });
+
+    app.put("/myReview/:id", async (req, res) => {
+      const id = req.params.id;
+      const filter = { _id: new ObjectId(id) };
+      const option = { upsert: true };
+      const updatedReview = req.body;
+      const review = {
+        $set: {
+          photo: updatedReview.photo,
+          name: updatedReview.name,
+          description: updatedReview.description,
+          rating: updatedReview.rating,
+        },
+      };
+      const result = await gameReview.updateOne(filter, review, option);
       res.send(result);
     });
 
