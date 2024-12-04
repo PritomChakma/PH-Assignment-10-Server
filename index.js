@@ -1,4 +1,4 @@
-const { MongoClient, ServerApiVersion } = require("mongodb");
+const { MongoClient, ServerApiVersion, ObjectId } = require("mongodb");
 const express = require("express");
 require("dotenv").config();
 const cors = require("cors");
@@ -30,26 +30,40 @@ async function run() {
     // Connect the client to the server	(optional starting in v4.7)
     await client.connect();
 
-const gameReview = client.db("gameReview").collection("review")
+    const gameReview = client.db("gameReview").collection("review");
 
-app.get("/allReview", async(req, res) => {
-  const cursor = gameReview.find()
-  const result = await cursor.toArray()
-  res.send(result)
-})
-app.get("/myReview", async(req, res) => {
-  const {email} = req.query
-  const allReview = await gameReview.find().toArray()
-  const myReview = allReview.filter(i => i.email === email)
-  res.send(myReview)
-})
+    app.get("/allReview", async (req, res) => {
+      const cursor = gameReview.find();
+      const result = await cursor.toArray();
+      res.send(result);
+    });
 
+    app.get("/myReview", async (req, res) => {
+      const { email } = req.query;
+      const allReview = await gameReview.find().toArray();
+      const myReview = allReview.filter((i) => i.email === email);
+      res.send(myReview);
+    });
 
-    app.post("/allReview", async(req, res) => {
+    app.get("/myReview/:id", async (req, res) => {
+      const id = req.params.id;
+      const query = { _id: new ObjectId(id) };
+      const result = await gameReview.find(query);
+      res.send(result);
+    });
+
+    app.post("/allReview", async (req, res) => {
       const review = req.body;
       console.log(review);
-      const result = await gameReview.insertOne(review)
-      res.send(result)
+      const result = await gameReview.insertOne(review);
+      res.send(result);
+    });
+
+    app.delete("/myReview/:id", async (req, res) => {
+      const id = req.params.id;
+      const query = { _id: new ObjectId(id) };
+      const result = await gameReview.deleteOne(query);
+      res.send(result);
     });
 
     // Send a ping to confirm a successful connection
