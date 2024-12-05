@@ -31,6 +31,7 @@ async function run() {
     await client.connect();
 
     const gameReview = client.db("gameReview").collection("review");
+    const gameWishList = client.db("gameReview").collection("wishList");
 
     app.get("/allReview", async (req, res) => {
       const cursor = gameReview.find();
@@ -56,6 +57,20 @@ async function run() {
       const id = req.params.id;
       const query = { _id: new ObjectId(id) };
       const result = await gameReview.findOne(query);
+      res.send(result);
+    });
+
+    app.get("/watchlist", async (req, res) => {
+      const { email } = req.query;
+      const wishlist = await gameWishList.find().toArray();
+      const myWishlist = wishlist.filter((i) => i.email === email);
+      res.send(myWishlist);
+    });
+
+    app.post("/watchlist", async (req, res) => {
+      const watchlist = req.body;
+      console.log(watchlist);
+      const result = await gameWishList.insertOne(watchlist);
       res.send(result);
     });
 
