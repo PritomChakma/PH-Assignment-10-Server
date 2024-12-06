@@ -92,6 +92,7 @@ async function run() {
           name: updatedReview.name,
           description: updatedReview.description,
           rating: updatedReview.rating,
+          genres: updatedReview.genres,
         },
       };
       const result = await gameReview.updateOne(filter, review, option);
